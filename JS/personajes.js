@@ -2,43 +2,49 @@ const apiUrl = 'https://rickandmortyapi.com/api/character/'
 const apiUrlByName = 'https://rickandmortyapi.com/api/character/?name='
 const row = document.getElementById('row')
 const requestInit = apiUrl + ('[1,2,3,4,5,6,7,8,9]')
-const input = document.getElementById("input")
-const button = document.getElementById("button")
+const input = document.getElementById("input-search")
+const button = document.getElementById("button-search")
+let spinner;
+
+spinner();
 
 fetch(requestInit)
     .then(result =>{
-            spinner()
             return result.json()
     })
     .then(json => {
             populateCards(json)
+            toggleSpinner()
     })
     .catch(err => (console.log(err)))
 
-// button.addEventListener('click', () => {
-//     const request = apiUrl + (input.value)
-//     fetch(request)
-//         .then(result =>{
-//             return result.json()
-//     })
-//     .then(json => {
-//             armarCard(json)
-//     })
-//     .catch(err => {
-//             errorAlert()
-//     })
-// });
-    
-button.addEventListener("click", function (){
-        console.log("hola");
-    });
+ button.addEventListener('click', () => {
+    toggleSpinner()
+     const request = apiUrlByName + (input.value)
+     fetch(request)
+         .then(result =>{
+            return result.json()
+     })
+     .then(({ results }) => {
+        const character = results[0];
+        armarCard(character)
+        toggleSpinner()
+     })
+    .catch(err => {
+        errorAlert()
+     })
+ });
 
 function populateCards(characters) {
     characters.forEach(character => {
         armarCard(character)
     
     });
-} 
+}
+
+function toggleSpinner() {
+    spinner.classList.toggle('hide')
+}
 
 function armarCard(character) {
     const card = document.createElement('div')
@@ -67,7 +73,7 @@ function armarCard(character) {
 
 
 function spinner(){
-    const spinner =document.createElement("div")
+    spinner =document.createElement("div")
     const textSpinner = document.createElement("span")
     const body = document.getElementById("body")
     spinner.classList.add("spinner-border")
@@ -75,7 +81,6 @@ function spinner(){
 
     spinner.appendChild(textSpinner)
     body.appendChild(spinner)
-
 }
 
 function errorAlert(){
