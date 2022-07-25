@@ -1,13 +1,15 @@
 const apiUrl = 'https://rickandmortyapi.com/api/character/'
 const apiUrlByName = 'https://rickandmortyapi.com/api/character/?name='
 const row = document.getElementById('row')
+const rowByName = document.getElementById("rowByName")
 const requestInit = apiUrl + ('[1,2,3,4,5,6,7,8,9]')
 const input = document.getElementById("input-search")
 const button = document.getElementById("button-search")
-let spinner;
+let backButton;
+let spinnerInit;
 
-spinner();
 
+toggleSpinner();
 fetch(requestInit)
     .then(result =>{
             return result.json()
@@ -15,6 +17,7 @@ fetch(requestInit)
     .then(json => {
             populateCards(json)
             toggleSpinner()
+            
     })
     .catch(err => (console.log(err)))
 
@@ -27,26 +30,73 @@ fetch(requestInit)
      })
      .then(({ results }) => {
         const character = results[0];
-        armarCard(character)
-        toggleSpinner()
+        armarCardByName(character);
+        toggleCharacters();
+        button.disabled = true;
+        backButtonHide();
+        toggleSpinner();
+        
+
+        // COMO HACER PARA QUE CUANDO BORRAS EL INPUT VUELVAN A APARECER TODOS LOS PERSONAJES
+        
      })
     .catch(err => {
-        errorAlert()
+        // errorAlert()
+        console.log(err)
      })
  });
 
+
 function populateCards(characters) {
     characters.forEach(character => {
-        armarCard(character)
-    
+        armarCard(character)    
     });
 }
 
-function toggleSpinner() {
-    spinner.classList.toggle('hide')
+function toggleCharacters(){
+    // if(row.id === "cardInit"){
+    row.classList.toggle("hide")
+    
 }
 
+// en esta funcion tenemos que recibir un parametro "idParam" y al elemento que queremos esconder previamente le agregamos ese id
+    // elem.setAttribute('id', idParam)
+    
 function armarCard(character) {
+    const card = document.createElement('div')
+    const columna = document.createElement('div')
+    card.classList.add("card")
+    columna.classList.add("col-12","col-sm-6","col-md-4","col-lg-4","col-xl-4")
+    //VER ESTO!!!!!!!!!!!!!!!!! y lo de !important 
+    // let episodios = character.episode
+    // let episodeParams = new URLSearchParams(episodios)
+    // episodeParams.getAll(episodios)
+
+
+    const img = document.createElement('img')
+    const cardBody = document.createElement('div')
+    const cardTitle = document.createElement('h5')
+    const description = document.createElement('p')
+
+    card.appendChild(img)
+    cardBody.appendChild(cardTitle)
+    cardBody.appendChild(description)
+    card.appendChild(cardBody)
+    columna.appendChild(card)
+    row.appendChild(columna)
+
+    img.src = character.image
+    cardTitle.innerHTML = character.name
+    description.innerHTML = `Especie: ${character.species} <br/>Estatus: ${character.status} <br/>Genero: ${character.gender} <br/>Origen: ${character.origin.name}`
+    
+    // if(idParam === "cardInit"){
+    //     row.setAttribute("id", idParam)
+    // } else if (idParam === "cardByName"){
+    // row.setAttribute("id", idParam)}
+
+}
+
+function armarCardByName(character) {
     const card = document.createElement('div')
     const columna = document.createElement('div')
     card.classList.add("card")
@@ -62,30 +112,61 @@ function armarCard(character) {
     cardBody.appendChild(description)
     card.appendChild(cardBody)
     columna.appendChild(card)
-    row.appendChild(columna)
+    rowByName.appendChild(columna)
 
-    
     img.src = character.image
     cardTitle.innerHTML = character.name
-    description.innerHTML = character.species
+    description.innerHTML = `Especie: ${character.species} <br/>Estatus: ${character.status} <br/>Genero: ${character.gender} <br/>Origen: ${character.origin.name} `
+                    
 
 }
 
+
+function backButtonHide() {
+    backButton = document.createElement("button")
+    const navSearch = document.getElementById("navSearch")
+
+    navSearch.appendChild(backButton)
+
+    backButton.classList.add("btn", "btn-dark")
+    backButton.innerHTML = "Atrás"
+
+    backButton.addEventListener('click', () => {
+        toggleCharacters()
+        toggleBackButton()
+        button.disabled = false
+        location.reload()
+        
+    })
+}
+
+function toggleBackButton(){
+    backButton.classList.toggle("hide")
+}
+
+
+
+    //<button type="button" class="btn btn-dark">Dark</button>
 
 function spinner(){
-    spinner =document.createElement("div")
+    spinnerInit = document.createElement("div")
     const textSpinner = document.createElement("span")
     const body = document.getElementById("body")
-    spinner.classList.add("spinner-border")
+    spinnerInit.classList.add("spinner-border")
     textSpinner.classList.add("sr-only")
 
-    spinner.appendChild(textSpinner)
-    body.appendChild(spinner)
+    spinnerInit.appendChild(textSpinner)
+    body.appendChild(spinnerInit)
 }
 
-function errorAlert(){
-    // mostrar cartel boostrap
+function toggleSpinner(){
+    spinner()
+    spinnerInit.classList.toggle("hide")
 }
+
+// function errorAlert(){
+//     // mostrar cartel boostrap
+// }
 
 // }
 // <div class="spinner-border" role="status">
