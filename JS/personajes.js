@@ -21,7 +21,7 @@ fetch(requestInit)
     })
     .catch(err => (console.log(err)))
 
- button.addEventListener('click', () => {
+button.addEventListener('click', () => {
     toggleSpinner()
      const request = apiUrlByName + (input.value)
      fetch(request)
@@ -30,7 +30,7 @@ fetch(requestInit)
      })
      .then(({ results }) => {
         const character = results[0];
-        armarCardByName(character);
+        armarCard(character, 'single-result');
         toggleCharacters();
         button.disabled = true;
         backButtonHide();
@@ -49,7 +49,7 @@ fetch(requestInit)
 
 function populateCards(characters) {
     characters.forEach(character => {
-        armarCard(character)    
+        armarCard(character, 'results')    
     });
 }
 
@@ -62,16 +62,13 @@ function toggleCharacters(){
 // en esta funcion tenemos que recibir un parametro "idParam" y al elemento que queremos esconder previamente le agregamos ese id
     // elem.setAttribute('id', idParam)
     
-function armarCard(character) {
+function armarCard(character, container) {
     const card = document.createElement('div')
     const columna = document.createElement('div')
     card.classList.add("card")
     columna.classList.add("col-12","col-sm-6","col-md-4","col-lg-4","col-xl-4")
-    //VER ESTO!!!!!!!!!!!!!!!!! y lo de !important 
-    // let episodios = character.episode
-    // let episodeParams = new URLSearchParams(episodios)
-    // episodeParams.getAll(episodios)
-
+    // array de numeros de episodios
+    const episodios = character.episode.map(episode => episode.split('/').at(-1));
 
     const img = document.createElement('img')
     const cardBody = document.createElement('div')
@@ -83,12 +80,16 @@ function armarCard(character) {
     cardBody.appendChild(description)
     card.appendChild(cardBody)
     columna.appendChild(card)
-    row.appendChild(columna)
+
+    if (container === 'results') {
+        row.appendChild(columna)
+    } else {
+        rowByName.appendChild(columna)
+    }
 
     img.src = character.image
     cardTitle.innerHTML = character.name
-    description.innerHTML = `Especie: ${character.species} <br/>Estatus: ${character.status} <br/>Genero: ${character.gender} <br/>Origen: ${character.origin.name}`
-    
+    description.innerHTML = `Especie: ${character.species} <br/>Estatus: ${character.status} <br/>Genero: ${character.gender} <br/>Origen: ${character.origin.name} <br/>Episodios: ${episodios.toString()}`
     // if(idParam === "cardInit"){
     //     row.setAttribute("id", idParam)
     // } else if (idParam === "cardByName"){
